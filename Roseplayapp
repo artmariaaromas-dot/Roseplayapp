@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>RosePlay 💜 - Assista e Ganhe</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #f6f4fb;
+    --lilac: #c9b3e6;
+    --lilac-dark:#a27cc7;
+    --text:#3b2f4a;
+    --white:#ffffff;
+    --card-shadow: 0 6px 20px rgba(66,37,103,0.08);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; font-family:'Poppins',sans-serif;
+    background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased;
+    display:flex; align-items:flex-start; justify-content:center; padding:22px;
+  }
+  .wrap{ width:100%; max-width:420px; }
+  header{ text-align:center; margin-bottom:12px;}
+  .brand{
+    background: linear-gradient(90deg,var(--lilac) 0%, #e9dffb 100%);
+    padding:16px; border-radius:14px; box-shadow:var(--card-shadow);
+  }
+  h1{ margin:0;color:var(--lilac-dark); font-size:20px; }
+  p.lead{ margin:6px 0 0 0; font-size:13px; color:#6b5c86;}
+  .card{ background:var(--white); border-radius:14px; padding:14px; margin-top:14px; box-shadow:var(--card-shadow); }
+  label{ font-size:13px; display:block; margin-bottom:6px; color:#5b4a79;}
+  input[type="text"], select { width:100%; padding:10px 12px; border-radius:10px; border:1px solid #eee; margin-bottom:10px; font-size:14px; }
+  button{ background:var(--lilac-dark); color:white; border:0; padding:11px 14px; border-radius:10px; cursor:pointer; font-weight:600; }
+  button.secondary{ background:#fff; color:var(--lilac-dark); border:1px solid #e6dff8; }
+  .saldo{ font-size:15px; font-weight:700; color:var(--lilac-dark); }
+  .small{ font-size:12px; color:#7b6a9b; margin-top:8px; }
+  .row{ display:flex; gap:8px; }
+  .row > * { flex:1; }
+  .footer{ text-align:center; margin-top:14px; font-size:12px; color:#8d7fb0; }
+  .center{ text-align:center; }
+  .timer{ font-weight:700; color:#4b3568; margin-top:8px; }
+  .modal{ position:fixed; left:0; right:0; top:0; bottom:0; background:rgba(0,0,0,0.45); display:flex; align-items:center; justify-content:center; }
+  .modal .box{ background:white; padding:18px; border-radius:12px; width:90%; max-width:420px; }
+  .flex-between{ display:flex; justify-content:space-between; align-items:center; gap:8px;}
+  .link-preview{ background:#faf7ff; padding:8px; border-radius:8px; font-size:13px; color:#6d5790; margin-bottom:8px;}
+  .muted{ color:#9b8fb3; font-size:13px;}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="brand">
+      <h1>🌸 RosePlay — Assista e Ganhe</h1>
+      <p class="lead">Cada vídeo assistido = <strong>10 pontos</strong> • 1000 pontos = R$ 1,00</p>
+    </header>
+
+    <div class="card">
+      <div class="flex-between">
+        <div>
+          <p class="muted">Saldo</p>
+          <div class="saldo" id="saldoDisplay">0 pontos</div>
+        </div>
+        <div class="center">
+          <p class="muted">Conversão</p>
+          <div style="font-weight:700">1000 pts = R$ 1,00</div>
+        </div>
+      </div>
+
+      <hr style="border:none;height:12px">
+
+      <label for="linkType">Tipo de link</label>
+      <select id="linkType">
+        <option value="youtube">YouTube</option>
+        <option value="linkvertise">Linkvertise (ou outro)</option>
+        <option value="custom">Outro (direct)</option>
+      </select>
+
+      <label for="videoUrl">Cole o link do vídeo (YouTube / Linkvertise)</label>
+      <input id="videoUrl" type="text" placeholder="Ex: https://www.youtube.com/watch?v=..." />
+
+      <div style="margin-bottom:8px;">
+        <button id="btnWatch">▶️ Assistir vídeo</button>
+        <button id="btnConfirm" class="secondary" style="margin-left:8px" disabled>✔️ Confirmar que assisti</button>
+      </div>
+
+      <div class="timer" id="timerText" style="display:none">⏳ Tempo restante: <span id="sec">0</span>s</div>
+      <div class="small">Dica: o botão "Confirmar" habilita após o tempo mínimo (30s). Abra o vídeo em nova aba, assista e depois confirme.</div>
+    </div>
+
+    <div class="card" style="margin-top:12px;">
+      <h3 style="margin:0 0 8px 0">Pix (para saque)</h3>
+
+      <label for="pixName">Nome (titular)</label>
+      <input id="pixName" placeholder="Nome completo" type="text" />
+
+      <label for="pixKey">Chave Pix</label>
+      <input id="pixKey" placeholder="e.g. email, cpf ou telefone" type="text" />
+
+      <label for="pixBank">Banco</label>
+      <input id="pixBank" placeholder="Nome do banco" type="text" />
+
+      <div style="display:flex; gap:8px; margin-top:8px;">
+        <button id="savePix" class="secondary">💾 Salvar Pix</button>
+        <button id="requestWithdraw">💸 Solicitar Saque</button>
+      </div>
+
+      <p class="small">Observação: pedidos de saque são apenas um registro visual dentro do app — você receberá o pedido para processar manualmente.</p>
+    </div>
+
+    <div class="footer">🌹 Família Rose — juntos somos sucesso</div>
+  </div>
+
+  <!-- Modal area -->
+  <div id="modal" style="display:none;"></div>
+
+<script>
+/* ====== Configurações iniciais ====== */
+const PONTOS_POR_VIDEO = 10;
+const TEMPO_MINIMO_SEG = 30; // tempo mínimo em segundos antes de permitir confirmar
+const STORAGE_KEY = 'roseplay_data_v1';
+
+function loadState(){
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if(!raw) return { pontos:0, pix:{name:'',key:'',bank:''} };
+  try{ return JSON.parse(raw); } catch(e){ return { pontos:0, pix:{name:'',key:'',bank:''} }; }
+}
+function saveState(state){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+let state = loadState();
+document.getElementById('saldoDisplay').innerText = `${state.pontos} pontos`;
+
+/* ====== Pix salvar/carregar ====== */
+document.getElementById('pixName').value = state.pix.name || '';
+document.getElementById('pixKey').value = state.pix.key || '';
+document.getElementById('pixBank').value = state.pix.bank || '';
+
+document.getElementById('savePix').addEventListener('click',()=>{
+  state.pix.name = document.getElementById('pixName').value.trim();
+  state.pix.key  = document.getElementById('pixKey').value.trim();
+  state.pix.bank = document.getElementById('pixBank').value.trim();
+  saveState(state);
+  alert('✔️ Dados Pix salvos localmente no seu navegador.');
+});
+
+/* ====== Assistir vídeo ====== */
+let countdown = null;
+let remaining = 0;
+const btnWatch = document.getElementById('btnWatch');
+const btnConfirm = document.getElementById('btnConfirm');
+const timerText = document.getElementById('timerText');
+const secSpan = document.getElementById('sec');
+
+btnWatch.addEventListener('click', ()=>{
+  const url = document.getElementById('videoUrl').value.trim();
+  if(!url){
+    alert('Cole o link do vídeo (YouTube ou Linkvertise) no campo acima.');
+    return;
+  }
+
+  // Abre o link em nova aba
+  window.open(url, '_blank');
+
+  // Inicia temporizador
+  startTimer(TEMPO_MINIMO_SEG);
+});
+
+function startTimer(seconds){
+  clearInterval(countdown);
+  remaining = seconds;
+  secSpan.innerText = remaining;
+  timerText.style.display = 'block';
+  btnConfirm.disabled = true;
+
+  countdown = setInterval(()=>{
+    remaining -= 1;
+    secSpan.innerText = remaining;
+    if(remaining <= 0){
+      clearInterval(countdown);
+      timerText.style.display = 'none';
+      btnConfirm.disabled = false;
+      alert('Você pode confirmar que assistiu. Clique em "Confirmar" para receber seus pontos.');
+    }
+  },1000);
+}
+
+/* ====== Confirmar e adicionar pontos ====== */
+btnConfirm.addEventListener('click', ()=>{
+  // Para evitar fraude simples: só permite confirmar se temporizador já zerou
+  if(!btnConfirm.disabled){
+    state.pontos = (state.pontos || 0) + PONTOS_POR_VIDEO;
+    saveState(state);
+    document.getElementById('saldoDisplay').innerText = `${state.pontos} pontos`;
+    btnConfirm.disabled = true;
+    alert(`🎉 Você recebeu +${PONTOS_POR_VIDEO} pontos!`);
+  } else {
+    alert('Ainda não pode confirmar. Assista ao vídeo por pelo menos 30s.');
+  }
+});
+
+/* ====== Solicitar saque (visual) ====== */
+document.getElementById('requestWithdraw').addEventListener('click', ()=>{
+  if((state.pontos || 0) < 1000){
+    alert('Você precisa ter pelo menos 1000 pontos (R$1,00) para solicitar saque.');
+    return;
+  }
+  const name = state.pix.name || document.getElementById('pixName').value.trim();
+  const key  = state.pix.key  || document.getElementById('pixKey').value.trim();
+  const bank = state.pix.bank || document.getElementById('pixBank').value.trim();
+  if(!name || !key || !bank){
+    alert('Preencha seus dados Pix (nome, chave e banco) antes de solicitar saque.');
+    return;
+  }
+
+  // Gera pedido mock
+  const pedido = {
+    id: 'RP-'+Date.now(),
+    pontos: state.pontos,
+    valorReais: (state.pontos/1000).toFixed(2),
+    pix: { name, key, bank },
+    criadoEm: new Date().toLocaleString()
+  };
+
+  // Limpa pontos (simulando que você processará o pagamento manualmente)
+  state.pontos = 0;
+  saveState(state);
+  document.getElementById('saldoDisplay').innerText = `${state.pontos} pontos`;
+
+  // Mostrar resumo do pedido em modal
+  showModal(`
+    <h3>Pedido de Saque Enviado</h3>
+    <p><strong>ID:</strong> ${pedido.id}</p>
+    <p><strong>Pontos:</strong> ${pedido.pontos}</p>
+    <p><strong>Valor:</strong> R$ ${pedido.valorReais}</p>
+    <p><strong>Pix:</strong> ${pedido.pix.name} — ${pedido.pix.key} (${pedido.pix.bank})</p>
+    <p><small>Guarde o ID do pedido. Você precisa processar o pagamento manualmente fora do app.</small></p>
+    <div style="text-align:right"><button onclick="closeModal()">Fechar</button></div>
+  `);
+});
+
+/* ====== Modal simples ====== */
+function showModal(html){
+  const modal = document.getElementById('modal');
+  modal.innerHTML = `<div class="modal"><div class="box">${html}</div></div>`;
+  modal.style.display = 'block';
+}
+function closeModal(){ const modal = document.getElementById('modal'); modal.style.display='none'; modal.innerHTML=''; }
+
+/* ====== Salva estado ao sair (safety) ====== */
+window.addEventListener('beforeunload', ()=> saveState(state) );
+
+</script>
+</body>
+</html>
